@@ -1,3 +1,15 @@
+/*
+ * ECE 153B - Winter 2023
+ *
+ * Name(s): Junhwan Lee, Taeho Kim
+ * Section: Tuesday
+ * Project
+ */
+
+
+#include "UltSonic.h"
+#include <stdio.h> 
+
 uint32_t volatile currentValue = 0;
 uint32_t volatile lastValue = 0;
 uint32_t volatile overflowCount = 0;
@@ -154,4 +166,13 @@ void Trigger_Setup() {
 	// DIR = 1 => countsdown
   TIM1->CR1 |= TIM_CR1_DIR;
   TIM1->CR1 |= TIM_CR1_CEN;
+}
+
+void Setup(){
+	Input_Capture_Setup();
+	Trigger_Setup();
+}
+
+uint32_t getTimeInterval(){
+	return timeInterval;
 }
