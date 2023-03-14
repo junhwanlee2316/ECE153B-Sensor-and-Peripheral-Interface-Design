@@ -35,5 +35,9 @@ int main(void) {
 		if (t/1000 < 38) {
 			dist_cm = t/58;
 		}
+
+		I2C_SendData(I2C1, SlaveAddress, &command, 1);
+		// Next, get the measurement
+		I2C_ReceiveData(I2C1, SlaveAddress, &Data_Receive, 1);
 	}
 }
