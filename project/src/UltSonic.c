@@ -1,3 +1,5 @@
+#include "UltSonic.h"
+
 uint32_t volatile currentValue = 0;
 uint32_t volatile lastValue = 0;
 uint32_t volatile overflowCount = 0;
