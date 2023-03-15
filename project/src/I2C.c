@@ -11,7 +11,8 @@ extern void Error_Handler(void);
 // 4.7 kOmh for low speed, 
 // 3.0 kOmh for the standard mode, and 
 // 1.0 kOmh for the fast mode
-	
+
+
 //===============================================================================
 //                        I2C GPIO Initialization
 //===============================================================================
@@ -51,7 +52,7 @@ void I2C_GPIO_Init(void) {
 //                          I2C Initialization
 //===============================================================================
 void I2C_Initialization(void){
-	uint32_t OwnAddr = 0x52;
+	uint32_t OwnAddr = 0x23;
 	//part B
 	
 	RCC->APB1ENR1 |= RCC_APB1ENR1_I2C1EN; // 1.a enable peripheral clk
@@ -85,7 +86,7 @@ void I2C_Initialization(void){
 	Min data setup time = 1000ns = 1us
 	Min data hold time = 1250ns = 1.25us
 	
-	PRESC = 7
+	PRESC = 1
 	f_PRESC = 80MHz/(1+7) = 10MHz (t_PRESC = 0.1us)
 	SCLDEL = 0
 	t_SCLDEL = (SCLDEL + 1) * t_PRESC = (10 + 1)*0.1us = 1.1us Condition: [t_SCLDEL > 1us] 
@@ -98,7 +99,7 @@ void I2C_Initialization(void){
 	
 	*/
 
-	I2C1->TIMINGR |= ((7<<I2C_TIMINGR_PRESC_POS) 
+	I2C1->TIMINGR |= ((1<<I2C_TIMINGR_PRESC_POS) 
 					 |(10<<I2C_TIMINGR_SCLDEL_POS)
 					 |(12<<I2C_TIMINGR_SDADEL_POS)
 					 |(47<<I2C_TIMINGR_SCLH_POS)
@@ -134,11 +135,11 @@ int8_t I2C_Start(I2C_TypeDef * I2Cx, uint32_t DevAddress, uint8_t Size, uint8_t 
 	// Direction = 0: Master requests a write transfer
 	// Direction = 1: Master requests a read transfer
 	
-	uint32_t x_axis = 0;
+	uint32_t tmpreg = 0;
 	
 	// This bit is set by software, and cleared by hardware after the Start followed by the address
 	// sequence is sent, by an arbitration loss, by a timeout error detection, or when PE = 0.
-	x_axis = I2Cx->CR2;
+	tmpreg = I2Cx->CR2;
 	
 	tmpreg &= (uint32_t)~((uint32_t)(I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RELOAD | I2C_CR2_AUTOEND | I2C_CR2_RD_WRN | I2C_CR2_START | I2C_CR2_STOP));
 	
