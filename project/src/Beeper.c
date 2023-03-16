@@ -1,10 +1,4 @@
 #include "Beeper.h"
-/*Steps
-1. initialize beeper
-2. change main so that when the distance becomes too close, beeper makes the sound
-3. input: distance, output: high
-	 if (distance = something) then output = 1 in main
-*/
 
 void Beeper_Init(){
 		// enable clock for port B
