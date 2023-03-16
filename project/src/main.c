@@ -192,5 +192,10 @@ int main(void) {
 		if (t/1000 < 38) {
 			dist_cm = t/58;
 		}
+		
+		// beep if any object is detected within 10cm
+		if (dist_cm < 10) {
+			GPIOB->ODR |= GPIO_ODR_OD5;
+		}
 	}
 }
