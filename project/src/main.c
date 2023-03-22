@@ -3,6 +3,7 @@
  *
  * Name(s): Junhwan Lee, Taeho Kim
  * Section: Tuesday
+<<<<<<< Updated upstream
  * Lab: 3B
  */
  
@@ -194,3 +195,122 @@ int main(void) {
 		}
 	}
 }
+=======
+ * Project
+*/
+ 
+/*
+ * Beeper: PB5
+ * I2C: S:PB6 D:PB7
+ * Stepper Motor: PC 5-8
+ * UART: PA2, PA3
+ * UltSonic: Capture: PA0 Trigger: PA9
+*/
+ 
+#include <stdio.h> 
+#include "stm32l476xx.h"
+#include "Beeper.h"
+#include "UltSonic.h"
+#include "Stepper.h"
+#include "I2C.h"
+#include "Nunchuck.h"
+#include "SysClock.h"
+#include "UART.h"
+
+uint32_t volatile dist_cm = 0;
+static int x = 0;
+
+void Init_USARTx(int x) {
+	if(x == 1) {
+		UART1_Init();
+		UART1_GPIO_Init();
+		USART_Init(USART1);
+	} else if(x == 2) {
+		UART2_Init();
+		UART2_GPIO_Init();
+		USART_Init(USART2);
+	} else {
+		// Do nothing...
+	}
+}
+
+// Ultrasonic Sensor function
+void sensor(void){
+				uint32_t t = getTimeInterval();
+				
+        if (t/1000 < 38) {
+            dist_cm = t/58;
+        }
+
+        if (dist_cm < 10) {
+            GPIOB->ODR |= GPIO_ODR_OD5;
+						printf("There is an object within 10cm! \n");
+        }
+				for(int i = 0; i< 100000; i++){}
+        GPIOB->ODR &=~GPIO_ODR_OD5;
+}
+
+
+// main function
+int main(void) {
+		
+	System_Clock_Init();	//80MHz
+
+  // Initialize the I2C Wii Nunchuk
+  I2C_GPIO_Init();
+  I2C_Initialization();
+  initChuk();
+
+  // Initialize Beeper
+  Beeper_Init();
+  
+  // Initialize Stepper Motor
+  initStepperMotor();
+
+  // Initialize USART
+  Init_USARTx(2);
+  
+  // Initialize UltraSonic Sensor
+  Setup();
+  
+  // beep if any object is detected within 10cm
+  printf("Detecting...\n");
+
+  // delay to adjust the speed
+  int delay = 0;
+
+  // Begin 
+  while(1) {
+
+    // Read the Nunchuk x-axis
+    x = readChuk();
+
+    // Set the speed of the motor
+    delay = 40000;
+
+    // Check the sensor
+    sensor();
+
+    // if Nunchuk stick is not moved
+    if(x == 0){
+      
+      // Stop motor
+      stopMotor();
+    }
+
+    // if left, counter clockwise
+    if(x == 1){
+      Full_Stepping_CounterClockwise(delay);
+    }
+
+    // if right, clockwise
+    if(x == -1){
+      Full_Stepping_Clockwise(delay);
+    }
+
+    // Delay
+    for(int i = 0; i< 1000; i++){}
+  }
+}
+// end of main
+>>>>>>> Stashed changes
